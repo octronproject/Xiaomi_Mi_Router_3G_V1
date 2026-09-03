@@ -60,21 +60,17 @@ jobs:
     - name: Generate Config for Mi Router 3G
       run: |
         cd openwrt
-        echo "CONFIG_TARGET_ramips=y" > .config
-        echo "CONFIG_TARGET_ramips_mt7621=y" >> .config
-        echo "CONFIG_TARGET_ramips_mt7621_DEVICE_xiaomi_mi-router-3g=y" >> .config
-        
-        # Suntik aplikasi LuCI dasar (Bahasa Indonesia)
-        echo "CONFIG_PACKAGE_luci=y" >> .config
-        echo "CONFIG_PACKAGE_luci-app-firewall=y" >> .config
-        echo "CONFIG_PACKAGE_luci-i18n-base-id=y" >> .config
-        
         if [ -f "../.config" ]; then
-          cat ../.config >> .config
+          cp -f ../.config .config
+          echo "Berhasil menyalin .config kustom!"
+        else
+          echo "CONFIG_TARGET_ramips=y" > .config
+          echo "CONFIG_TARGET_ramips_mt7621=y" >> .config
+          echo "CONFIG_TARGET_ramips_mt7621_DEVICE_xiaomi_mi-router-3g=y" >> .config
         fi
         
         make defconfig
-
+        
     - name: Download Package Source (Pre-download)
       run: |
         cd openwrt
