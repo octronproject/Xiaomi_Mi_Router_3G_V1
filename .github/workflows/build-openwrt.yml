@@ -75,14 +75,6 @@ jobs:
         
         make defconfig
 
-    - name: Force Match Vermagic Hash
-      run: |
-        cd openwrt
-        # Memaksa sistem build menggunakan signature yang sama persis dengan server resmi
-        echo "35fb64ea09ee15c2f267bd5436b7f178" > .vermagic
-        sed -i 's/$(STAMP_KERNEL_VERSION)/35fb64ea09ee15c2f267bd5436b7f178/g' include/kernel-defaults.mk
-        echo "Vermagic successfully forced to 35fb64ea09ee15c2f267bd5436b7f178"
-
     - name: Download Package Source (Pre-download)
       run: |
         cd openwrt
