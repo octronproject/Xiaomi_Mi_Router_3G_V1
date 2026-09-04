@@ -86,14 +86,11 @@ jobs:
         fi
         
         make defconfig
-                # Mengompilasi seluruh modul kernel yang diaktifkan di .config sekaligus
-        make target/linux/compile V=s
-
         
     - name: Download Package Source (Pre-download)
       run: |
         cd openwrt
-        make download -j8
+        make download -j$(nproc)
         find dl -size 0 -exec rm -f {} \;
 
     - name: Compile Toolchain & Firmware (World)
@@ -114,7 +111,12 @@ jobs:
         path: ${{ env.FIRMWARE_PATH }}/*
         retention-days: 3
 
-    - name: Kmod Package Backup
+        # Mengompilasi seluruh modul kernel yang diaktifkan di .config sekaligus
+    - name: Package Compile
+      run: |
+       make target/linux/compile V=s
+
+    - name: Package Backup
       run: |
         # Membuat folder khusus untuk menampung hasil salinan paket kmod kustom
         mkdir -p kmod-artifacts
