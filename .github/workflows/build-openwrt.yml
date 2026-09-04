@@ -86,6 +86,9 @@ jobs:
         fi
         
         make defconfig
+                # Mengompilasi seluruh modul kernel yang diaktifkan di .config sekaligus
+        make target/linux/compile V=s
+
         
     - name: Download Package Source (Pre-download)
       run: |
@@ -109,4 +112,23 @@ jobs:
       with:
         name: OpenWrt_25.12.5_MiRouter3G_SPI_${{ env.BUILD_DATE }}
         path: ${{ env.FIRMWARE_PATH }}/*
+        retention-days: 3
+
+    - name: Kmod Package Backup
+      run: |
+        # Membuat folder khusus untuk menampung hasil salinan paket kmod kustom
+        mkdir -p kmod-artifacts
+        
+        # Mencari semua file .ipk atau .apk hasil compile, lalu menyalinnya ke folder kmod-artifacts
+        # Perintah ini mengabaikan file index, metadata, atau paket sistem bawaan lain
+        find openwrt/bin/ -type f \( -name "*.ipk" -o -name "*.apk" \) ! -name "packages*" -exec cp {} kmod-artifacts/ \;
+        
+        echo "=== FILE YANG AKAN DIUNGGAH ==="
+        ls -la kmod-artifacts/
+
+    - name: Upload Modul Spesifik (Artifact)
+      uses: actions/upload-artifact@v4
+      with:
+        name: openwrt-kmod-packages-25.12.
+        path: kmod-artifacts/
         retention-days: 3
