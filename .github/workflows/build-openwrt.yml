@@ -93,3 +93,4 @@ jobs:
       with:
         name: OpenWrt_25.12.5_MiRouter3G_SPI_${{ env.BUILD_DATE }}
         path: ${{ env.FIRMWARE_PATH }}/*
+        retention-days: 3
