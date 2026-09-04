@@ -39,6 +39,22 @@ jobs:
         cd openwrt
         git pull
         git checkout v25.12.5
+
+    - name: Cache OpenWrt DL and Staging Dir
+      uses: actions/cache@v4
+      with:
+        path: |
+          openwrt/dl
+          openwrt/staging_dir
+        # Cache dikunci berdasarkan versi tag OpenWrt. 
+        # Jika Anda mengubah isi file .config Anda, cache akan tetap dipakai (restore), namun jika ada update fungsionalitas, cache akan diperbarui otomatis saat build selesai.
+        key: ${{ runner.os }}-openwrt-25.12.5-${{ hashFiles('**/config', '**/.config') }}
+        restore-keys: |
+          ${{ runner.os }}-openwrt-25.12.5-
+
+    - name: Update and Install Feeds
+      run: |
+        cd openwrt
         ./scripts/feeds update -a
         ./scripts/feeds install -a
 
