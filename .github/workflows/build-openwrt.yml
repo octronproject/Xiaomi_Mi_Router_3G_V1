@@ -93,24 +93,6 @@ jobs:
         make download -j$(nproc)
         find dl -size 0 -exec rm -f {} \;
 
-    - name: Compile Toolchain & Firmware (World)
-      run: |
-        cd openwrt
-        make -j$(nproc) world || make -j1 V=s world
-
-    - name: Organize Files
-      id: organize
-      run: |
-        cd openwrt/bin/targets/ramips/mt7621
-        echo "FIRMWARE_PATH=$PWD" >> $GITHUB_ENV
-
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: OpenWrt_25.12.5_MiRouter3G_SPI_${{ env.BUILD_DATE }}
-        path: ${{ env.FIRMWARE_PATH }}/*
-        retention-days: 3
-
         # Mengompilasi seluruh modul kernel yang diaktifkan di .config sekaligus
     - name: Package Compile
       run: |
@@ -133,4 +115,22 @@ jobs:
       with:
         name: openwrt-kmod-packages-25.12.
         path: kmod-artifacts/
+        retention-days: 3
+
+    - name: Compile Toolchain & Firmware (World)
+      run: |
+        cd openwrt
+        make -j$(nproc) world || make -j1 V=s world
+
+    - name: Organize Files
+      id: organize
+      run: |
+        cd openwrt/bin/targets/ramips/mt7621
+        echo "FIRMWARE_PATH=$PWD" >> $GITHUB_ENV
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: OpenWrt_25.12.5_MiRouter3G_SPI_${{ env.BUILD_DATE }}
+        path: ${{ env.FIRMWARE_PATH }}/*
         retention-days: 3
