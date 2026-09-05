@@ -93,30 +93,6 @@ jobs:
         make download -j$(nproc)
         find dl -size 0 -exec rm -f {} \;
 
-        # Mengompilasi seluruh modul kernel yang diaktifkan di .config sekaligus
-    - name: Package Compile
-      run: |
-       make target/linux/compile V=s
-
-    - name: Package Backup
-      run: |
-        # Membuat folder khusus untuk menampung hasil salinan paket kmod kustom
-        mkdir -p kmod-artifacts
-        
-        # Mencari semua file .ipk atau .apk hasil compile, lalu menyalinnya ke folder kmod-artifacts
-        # Perintah ini mengabaikan file index, metadata, atau paket sistem bawaan lain
-        find openwrt/bin/ -type f \( -name "*.ipk" -o -name "*.apk" \) ! -name "packages*" -exec cp {} kmod-artifacts/ \;
-        
-        echo "=== FILE YANG AKAN DIUNGGAH ==="
-        ls -la kmod-artifacts/
-
-    - name: Upload Modul Spesifik (Artifact)
-      uses: actions/upload-artifact@v4
-      with:
-        name: openwrt-kmod-packages-25.12.
-        path: kmod-artifacts/
-        retention-days: 3
-
     - name: Compile Toolchain & Firmware (World)
       run: |
         cd openwrt
